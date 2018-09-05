@@ -91,5 +91,15 @@ namespace Salesforce
             result.sobjects = result.sobjects.OrderBy(p => p.name).ToArray();
             return result;
         }
+
+        public SalesforceProxy.SaveResult Create(SalesforceProxy.sObject item)
+        {
+            SalesforceProxy.sObject[] sObjects = { item };
+            SalesforceProxy.LimitInfo[] limitInfoHeader;
+            SalesforceProxy.SaveResult[] result;
+            Client.create(_sessionHeader, null, null, null, null, null, null, null, null, null, null, null, 
+                sObjects, out limitInfoHeader, out result);
+            return result[0];
+        }
     }
 }
