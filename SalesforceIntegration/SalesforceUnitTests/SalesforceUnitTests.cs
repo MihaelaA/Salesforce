@@ -158,6 +158,34 @@ namespace SalesforceUnitTests
 
         [TestMethod]
         [TestCategory("Query")]
+        public void TestQueryLeadAttachments()
+        {
+            Salesforce.SalesforceProxy.sObject[] objects = sf.Query(
+                "SELECT Name, Description, Id, ParentId, OwnerId FROM Attachment WHERE ParentId='00Q0b00001XoqUnEAJ'");
+
+            for (int i = 0; i < objects.Length; i++)
+            {
+                Salesforce.SalesforceProxy.Attachment att = (Salesforce.SalesforceProxy.Attachment)objects[i];
+                Console.WriteLine("{0}\t{1}\nDescription:\t{2}\nId:\t{3}\nParentId:\t{4}\nOwnerId:{5}\n", i + 1, att.Name, att.Description, att.Id, att.ParentId, att.OwnerId);
+            }
+        }
+
+        [TestMethod]
+        [TestCategory("Query")]
+        public void TestQueryContactAttachments() //LeadFN LeadLN	0030b000025RD4tAAG
+        {
+            Salesforce.SalesforceProxy.sObject[] objects = sf.Query(
+                "SELECT Name, Description, Id, ParentId, OwnerId FROM Attachment WHERE ParentId='0030b000025RD4tAAG'");
+
+            for (int i = 0; i < objects.Length; i++)
+            {
+                Salesforce.SalesforceProxy.Attachment att = (Salesforce.SalesforceProxy.Attachment)objects[i];
+                Console.WriteLine("{0}\t{1}\nDescription:\t{2}\nId:\t{3}\nParentId:\t{4}\nOwnerId:{5}\n", i + 1, att.Name, att.Description, att.Id, att.ParentId, att.OwnerId);
+            }
+        }
+
+        [TestMethod]
+        [TestCategory("Query")]
         public void TestQueryContentAsset()
         {
             Salesforce.SalesforceProxy.sObject[] objects = sf.Query(
@@ -191,13 +219,13 @@ namespace SalesforceUnitTests
         public void TestQueryDocument()
         {
             Salesforce.SalesforceProxy.sObject[] objects = sf.Query(
-                "SELECT Name, Description, Id, BodyLength FROM Document");
+                "SELECT Name, Description, Id, BodyLength, IsPublic, ContentType FROM Document");
 
             for (int i = 0; i < objects.Length; i++)
             {
                 Salesforce.SalesforceProxy.Document att = (Salesforce.SalesforceProxy.Document)objects[i];
-                Console.WriteLine("{0}\t{1}\nDescription:\t{2}\nId:\t{3}\nBodyLength:\t{4}\n",
-                    i + 1, att.Name, att.Description, att.Id, att.BodyLength);
+                Console.WriteLine("{0}\t{1}\nDescription:\t{2}\nId:\t{3}\nBodyLength:\t{4}\nIsPublic:\t{5}\nContentType:\t{6}\n",
+                    i + 1, att.Name, att.Description, att.Id, att.BodyLength, att.IsPublic, att.ContentType);
             }
         }
 
@@ -221,13 +249,13 @@ namespace SalesforceUnitTests
         public void TestQueryContentVersion()
         {
             Salesforce.SalesforceProxy.sObject[] objects = sf.Query(
-                "SELECT Title, Description, Id, OwnerId, ContentSize, ContentBodyId FROM ContentVersion");
+                "SELECT Title, Description, Id, OwnerId, ContentSize, ContentBodyId, PathOnClient FROM ContentVersion");
 
             for (int i = 0; i < objects.Length; i++)
             {
                 Salesforce.SalesforceProxy.ContentVersion att = (Salesforce.SalesforceProxy.ContentVersion)objects[i];
-                Console.WriteLine("{0}\t{1}\nDescription:\t{2}\nId:\t{3}\nOwnerId:{4}\nContentSize:\t{5}\nContentBodyId:{6}",
-                    i + 1, att.Title, att.Description, att.Id,att.OwnerId, att.ContentSize, att.ContentBodyId);
+                Console.WriteLine("{0}\t{1}\nDescription:\t{2}\nId:\t{3}\nOwnerId:{4}\nContentSize:\t{5}\nContentBodyId:{6}\nPathOnClient:{7}\n",
+                    i + 1, att.Title, att.Description, att.Id,att.OwnerId, att.ContentSize, att.ContentBodyId, att.PathOnClient);
             }
         }
 
@@ -342,15 +370,17 @@ namespace SalesforceUnitTests
 
         [TestMethod]
         [TestCategory("Create")]
-        public void TestCreateAttachment() // "00P0b00000tZuVoEAK"
+        public void TestCreateAttachment() // "00P0b00000tZuVoEAK" "00P0b00000taQUWEA2"
         {
             Salesforce.SalesforceProxy.Attachment att = new Salesforce.SalesforceProxy.Attachment()
             {
-                Body = Encoding.UTF8.GetBytes("abcde"),
-                Description = "API-uploaded attachment",
-                Name = "TestFromCode",
-                OwnerId = "0050b0000032fxTAAQ", // User ID - Mihaela Armanasu
-                ParentId = "00Q0b00001XoqUnEAJ" // Lead ID - LeadFN LeadLN
+                Body = Encoding.UTF8.GetBytes("abcdefg"),
+                Description = "API-created attachment with Lead parent and Automated Process Owner",
+                Name = "TestFromCodeTake3",
+                OwnerId = "0050b000005EV47AAG",//Automated Process	//"0050b0000032fxTAAQ", // User ID - Mihaela Armanasu
+                ParentId = "00Q0b00001XoqW5EAJ",//LeadFN1 LeadLN1	00Q0b00001XoqW5EAJ//LeadFN LeadLN contact from converted lead 0030b000025RD4tAAG //"00Q0b00001XoqUnEAJ", // Lead ID - LeadFN LeadLN
+                IsPrivate = false,
+                ContentType = "Text"
             };
 
             Salesforce.SalesforceProxy.SaveResult result = sf.Create(att);
@@ -399,6 +429,7 @@ namespace SalesforceUnitTests
                 Description = "API-create Content Version",
                 Title = "TestContentVersionFromCode",
                 OwnerId = "0050b0000032fxTAAQ", // User ID - Mihaela Armanasu
+                PathOnClient = ""
             };
 
             Salesforce.SalesforceProxy.SaveResult result = sf.Create(att);
@@ -422,15 +453,16 @@ namespace SalesforceUnitTests
 
         [TestMethod]
         [TestCategory("Create")]
-        public void TestCreateDocument() // "0150b000001gZ9NAAU" "0150b000001gZ9SAAU"
+        public void TestCreateDocument() // "0150b000001gZ9NAAU" "0150b000001gZ9SAAU" "0150b000001gh4xAAA"
         {
             Salesforce.SalesforceProxy.Document att = new Salesforce.SalesforceProxy.Document()
             {
                 Body = Encoding.UTF8.GetBytes("abcde"),
-                Description = "API-create Document",
-                Name = "TestDocumentFromCode",
+                Description = "API-create Document-PublicSpecified",
+                Name = "TestDocumentFromCodePublic",
                 AuthorId = "0050b0000032fxTAAQ", // User ID - Mihaela Armanasu
                 IsPublic = true,
+                IsPublicSpecified = true,
                 FolderId = "00l0b000001u51sAAA"
             };
 
@@ -439,6 +471,30 @@ namespace SalesforceUnitTests
         #endregion
 
         #region TestCategory("Describe")
+        [TestMethod]
+        [TestCategory("Describe")]
+        public void TestDescribeOpportunity()
+        {
+            Salesforce.SalesforceProxy.DescribeSObjectResult result = sf.DescribeSObject("Opportunity");
+            Console.WriteLine("createable = {0}", result.createable);
+            for (int i = 0; i < result.fields.Length; i++)
+            {
+                Console.WriteLine("{0}\t{1}", i + 1, result.fields[i].name);
+            }
+        }
+
+        [TestMethod]
+        [TestCategory("Describe")]
+        public void TestDescribeContact()
+        {
+            Salesforce.SalesforceProxy.DescribeSObjectResult result = sf.DescribeSObject("Contact");
+            Console.WriteLine("createable = {0}", result.createable);
+            for (int i = 0; i < result.fields.Length; i++)
+            {
+                Console.WriteLine("{0}\t{1}", i + 1, result.fields[i].name);
+            }
+        }
+
         [TestMethod]
         [TestCategory("Describe")]
         public void TestDescribeContentAsset()
