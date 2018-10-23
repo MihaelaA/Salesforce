@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Net;
 using System.ServiceModel;
@@ -18,6 +19,9 @@ namespace Salesforce
         private static SalesforceProxy.SessionHeader _sessionHeader;
         private static EndpointAddress _endpoint;
 
+        // For REST calls
+        private static string _sessionId;
+
         private string _userName;
         private string _password;
 
@@ -33,7 +37,8 @@ namespace Salesforce
             _loginClient = new SalesforceProxy.SoapClient();
             SalesforceProxy.LoginResult lr = _loginClient.login(null, _userName, _password);
             _endpoint = new EndpointAddress(lr.serverUrl);
-            _sessionHeader = new SalesforceProxy.SessionHeader { sessionId = lr.sessionId };
+            _sessionId = lr.sessionId;
+            _sessionHeader = new SalesforceProxy.SessionHeader { sessionId = _sessionId };
 
             var myBinding = new BasicHttpsBinding();
             myBinding.MaxReceivedMessageSize = 500 * 1024 * 1024;
@@ -50,6 +55,7 @@ namespace Salesforce
             Client.logout(_sessionHeader);
         }
 
+        #region SOAP
         public SalesforceProxy.sObject[] Query(string soqlQuery)
         {
             List<SalesforceProxy.sObject> result = new List<SalesforceProxy.sObject>();
@@ -113,5 +119,108 @@ namespace Salesforce
             //return result[0];
             return null;
         }
+        #endregion
+
+        #region REST
+        // https://dzone.com/articles/a-few-great-ways-to-consume-restful-apis-in-c
+        // https://developer.salesforce.com/docs/atlas.en-us.api_rest.meta/api_rest/quickstart_oauth.htm
+        public bool CallRest()
+        {
+            bool result = false;
+            string url = _endpoint.Uri.AbsoluteUri.Substring(0, _endpoint.Uri.AbsoluteUri.Length - _endpoint.Uri.AbsolutePath.Length);
+            HttpWebRequest request = (HttpWebRequest)WebRequest.Create(url + "/services/data/v37.0/sobjects/");
+            request.Method = "GET";
+            request.Headers["Authorization"] = "Bearer " + _sessionId;
+
+            try
+            {
+                var response = (HttpWebResponse)request.GetResponse();
+                string content = string.Empty;
+                using (var stream = response.GetResponseStream())
+                {
+                    using (var sr = new StreamReader(stream))
+                    {
+                        content = sr.ReadToEnd();
+                        result = true;
+                    }
+                }
+                Console.WriteLine(content);
+            }
+            catch (WebException ex)
+            {
+                Console.WriteLine(ex.Message);
+            }
+
+            return result;
+        }
+
+        public bool GetREST(string urlPath)
+        {
+            bool result = false;
+            string url = _endpoint.Uri.AbsoluteUri.Substring(0, _endpoint.Uri.AbsoluteUri.Length - _endpoint.Uri.AbsolutePath.Length);
+            HttpWebRequest request = (HttpWebRequest)WebRequest.Create(url + urlPath);
+            request.Method = "GET";
+            request.Headers["Authorization"] = "Bearer " + _sessionId;
+
+            try
+            {
+                var response = (HttpWebResponse)request.GetResponse();
+                string content = string.Empty;
+                using (var stream = response.GetResponseStream())
+                {
+                    using (var sr = new StreamReader(stream))
+                    {
+                        content = sr.ReadToEnd();
+                        result = true;
+                    }
+                }
+                Console.WriteLine(content);
+            }
+            catch (WebException ex)
+            {
+                Console.WriteLine(ex.Message);
+            }
+
+            return result;
+        }
+
+        // https://developer.salesforce.com/docs/atlas.en-us.api_rest.meta/api_rest/dome_update_fields.htm
+        public bool UpdateREST(string urlPath, string jsonString)
+        {
+            bool result = false;
+            string url = _endpoint.Uri.AbsoluteUri.Substring(0, _endpoint.Uri.AbsoluteUri.Length - _endpoint.Uri.AbsolutePath.Length);
+            HttpWebRequest request = (HttpWebRequest)WebRequest.Create(url + urlPath);
+            request.Method = "PATCH";
+            request.Headers["Authorization"] = "Bearer " + _sessionId;
+            request.ContentType = "application/json; charset=utf-8";
+
+            try
+            {
+                using (var streamWriter = new StreamWriter(request.GetRequestStream()))
+                {
+                    streamWriter.Write(jsonString);
+                    streamWriter.Flush();
+                }
+
+                var response = (HttpWebResponse)request.GetResponse();
+                string content = string.Empty;
+                using (var stream = response.GetResponseStream())
+                {
+                    using (var sr = new StreamReader(stream))
+                    {
+                        content = sr.ReadToEnd();
+                        result = true;
+                    }
+                }
+                Console.WriteLine(content);
+            }
+            catch (WebException ex)
+            {
+                Console.WriteLine(ex.Message);
+            }
+
+            return result;
+        }
+        #endregion
     }
 }

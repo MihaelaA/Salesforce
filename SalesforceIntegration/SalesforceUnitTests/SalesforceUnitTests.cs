@@ -422,6 +422,35 @@ namespace SalesforceUnitTests
         }
         #endregion
 
+        #region TestCategory("REST")
+        [TestMethod]
+        [TestCategory("REST")]
+        public void TestREST()
+        {
+            bool result = sf.CallRest();
+            Assert.IsTrue(result);
+        }
+
+        [TestMethod]
+        [TestCategory("REST")]
+        public void TestGetREST()
+        {
+            string urlPath = "/services/data/v37.0/sobjects/MihaelaCustObj__c/a000b00001FUyLOAA1";
+            bool result = sf.GetREST(urlPath);
+            Assert.IsTrue(result);
+        }
+
+        [TestMethod]
+        [TestCategory("REST")]
+        public void TestUpdateREST()
+        {
+            string urlPath = "/services/data/v37.0/sobjects/MihaelaCustObj__c/a000b00001FUyLOAA1";
+            string jsonString = "{\"length__c\":\"4.4\"}";
+            bool result = sf.UpdateREST(urlPath, jsonString);
+            Assert.IsTrue(result);
+        }
+        #endregion
+
         [TestMethod]
         public void TestGetAttachment()
         {
