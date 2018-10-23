@@ -327,6 +327,101 @@ namespace SalesforceUnitTests
         }
         #endregion
 
+        #region TestCategory("CustomObject")
+        // Define the Custom Object type manually in Salesforce
+        // Export the WSDL after the CustomObject definition to have access to it:
+        // https://na57.salesforce.com/ui/setup/sforce/WebServicesSetupPage?setupid=WebServices&retURL=%2Fui%2Fsetup%2FSetup%3Fsetupid%3DDevToolsIntegrate
+        // Patner WSDL or Enterprise WSDL? I think Enterprise
+        
+            
+        // Use the APIs to add/list/update instances of the custom object
+
+        [TestMethod]
+        [TestCategory("CustomObject")]
+        public void CreateCustomObject() //"a000b00001FUyLOAA1"
+        {
+            Salesforce.SalesforceProxy.MihaelaCustObj__c mco = new Salesforce.SalesforceProxy.MihaelaCustObj__c()
+            {
+                Name = "API-created MCO",
+                length__cSpecified = true,
+                length__c = 12.34
+            };
+
+            Salesforce.SalesforceProxy.SaveResult result = sf.Create(mco);
+            Assert.IsTrue(result.success);
+            Console.WriteLine(result.id);
+        }
+
+        [TestMethod]
+        [TestCategory("CustomObject")]
+        public void DescribeCustomObject()
+        {
+            Salesforce.SalesforceProxy.DescribeSObjectResult result = sf.DescribeSObject("MihaelaCustObj__c");
+            Console.WriteLine("createable = {0}", result.createable);
+            for (int i = 0; i < result.fields.Length; i++)
+            {
+                Console.WriteLine("{0}\t{1}", i + 1, result.fields[i].name);
+            }
+        }
+
+        [TestMethod]
+        [TestCategory("CustomObject")]
+        public void QueryCustomObjects()
+        {
+            Salesforce.SalesforceProxy.sObject[] objects = sf.Query("SELECT Name, Id, OwnerId, length__c FROM MihaelaCustObj__c");
+
+            for (int i = 0; i < objects.Length; i++)
+            {
+                Salesforce.SalesforceProxy.MihaelaCustObj__c att = (Salesforce.SalesforceProxy.MihaelaCustObj__c)objects[i];
+                Console.WriteLine("{0}\t{1}\nId:\t{2}\nOwnerId:\t{3}\nlength__c:\t{4}\n", i + 1, att.Name, att.Id, att.OwnerId, att.length__c);
+            }
+        }
+
+        [TestMethod]
+        [TestCategory("CustomObject")]
+        public void RetrieveCustomObjects()
+        {
+            string fields = "Name, Id, CreatedById, CreatedDate, IsDeleted, OwnerId, length__c";
+            string[] ids = { "a000b00001FUyLOAA1" };
+            Salesforce.SalesforceProxy.sObject[] objects = sf.Retrieve(fields, "MihaelaCustObj__c", ids);
+
+            for (int i = 0; i < objects.Length; i++)
+            {
+                Salesforce.SalesforceProxy.MihaelaCustObj__c att = (Salesforce.SalesforceProxy.MihaelaCustObj__c)objects[i];
+                Console.WriteLine("{0}\nName:\t{1}\nId:\t{2}\nCreated:\t{3}\nCreatedBy:\t{4}\nIsDeleted:\t{5}" +
+                    "\nOwner:\t{6}\nlength__c:\t{7}",
+                    i + 1, att.Name, att.Id,
+                    att.CreatedById, att.CreatedDate, att.IsDeleted,
+                    att.OwnerId, att.length__c);
+            }
+        }
+
+        [TestMethod]
+        [TestCategory("CustomObject")]
+        public void TestGetCustomObject()
+        {
+            string soqlQuery = "SELECT  Name, length__c from MihaelaCustObj__c" +
+                " where Id = 'a000b00001FUyLOAA1'";
+            Salesforce.SalesforceProxy.sObject[] objects = sf.Query(soqlQuery);
+            Salesforce.SalesforceProxy.MihaelaCustObj__c att = (Salesforce.SalesforceProxy.MihaelaCustObj__c)objects[0];
+
+            Console.WriteLine(att.Name + " " + att.length__c.ToString());
+        }
+
+        [TestMethod]
+        [TestCategory("CustomObject")]
+        public void TestUpdateCustomObject()
+        {
+    //        string soqlQuery = "SELECT  Name, length__c from MihaelaCustObj__c" +
+    //" where Id = 'a000b00001FUyLOAA1'";
+    //        Salesforce.SalesforceProxy.sObject[] objects = sf.Query(soqlQuery);
+    //        Salesforce.SalesforceProxy.MihaelaCustObj__c att = (Salesforce.SalesforceProxy.MihaelaCustObj__c)objects[0];
+
+    //        att.length__c = 4444;
+    //        sf.Update();
+        }
+        #endregion
+
         [TestMethod]
         public void TestGetAttachment()
         {

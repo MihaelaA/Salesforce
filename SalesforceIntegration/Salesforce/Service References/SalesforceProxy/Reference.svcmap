@@ -19,10 +19,10 @@
     <ServiceContractMappings />
   </ClientOptions>
   <MetadataSources>
-    <MetadataSource Address="C:\Users\Mihaela.CORP\Documents\SalesForce\SalesForceEnterprise_wsdl.xml" Protocol="file" SourceId="1" />
+    <MetadataSource Address="C:\Users\Mihaela.CORP\Source\Repos\Salesforce\SalesforceIntegration\Salesforce\Service References\SalesforceProxy\SalesForceEnterprise_wsdl.xml" Protocol="file" SourceId="1" />
   </MetadataSources>
   <Metadata>
-    <MetadataFile FileName="SalesForceEnterprise_wsdl.wsdl" MetadataType="Wsdl" ID="b9e53070-7353-4921-9df8-d46579bf5adb" SourceId="1" SourceUrl="file:///C:/Users/Mihaela.CORP/Documents/SalesForce/SalesForceEnterprise_wsdl.xml" />
+    <MetadataFile FileName="SalesForceEnterprise_wsdl1.wsdl" MetadataType="Wsdl" ID="8c01e36d-6e19-480f-900a-931808e499f1" SourceId="1" SourceUrl="file:///C:/Users/Mihaela.CORP/Source/Repos/Salesforce/SalesforceIntegration/Salesforce/Service References/SalesforceProxy/SalesForceEnterprise_wsdl.xml" />
   </Metadata>
   <Extensions>
     <ExtensionFile FileName="configuration91.svcinfo" Name="configuration91.svcinfo" />

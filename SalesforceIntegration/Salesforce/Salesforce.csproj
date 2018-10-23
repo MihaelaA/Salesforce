@@ -54,7 +54,9 @@
     <WCFMetadata Include="Service References\" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="app.config" />
+    <None Include="app.config">
+      <SubType>Designer</SubType>
+    </None>
     <None Include="Service References\SalesforceProxy\Salesforce.SalesforceProxy.changeOwnPasswordResponse.datasource">
       <DependentUpon>Reference.svcmap</DependentUpon>
     </None>
@@ -122,6 +124,12 @@
       <DependentUpon>Reference.svcmap</DependentUpon>
     </None>
     <None Include="Service References\SalesforceProxy\Salesforce.SalesforceProxy.describeDataCategoryGroupStructuresResponse.datasource">
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </None>
+    <None Include="Service References\SalesforceProxy\Salesforce.SalesforceProxy.DescribeDataCategoryMappingResult.datasource">
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </None>
+    <None Include="Service References\SalesforceProxy\Salesforce.SalesforceProxy.describeDataCategoryMappingsResponse.datasource">
       <DependentUpon>Reference.svcmap</DependentUpon>
     </None>
     <None Include="Service References\SalesforceProxy\Salesforce.SalesforceProxy.describeGlobalResponse.datasource">
@@ -403,7 +411,7 @@
     <None Include="Service References\SalesforceProxy\Salesforce.SalesforceProxy.UpsertResult.datasource">
       <DependentUpon>Reference.svcmap</DependentUpon>
     </None>
-    <None Include="Service References\SalesforceProxy\SalesForceEnterprise_wsdl.wsdl" />
+    <None Include="Service References\SalesforceProxy\SalesForceEnterprise_wsdl1.wsdl" />
   </ItemGroup>
   <ItemGroup>
     <WCFMetadataStorage Include="Service References\SalesforceProxy\" />

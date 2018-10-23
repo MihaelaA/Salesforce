@@ -101,5 +101,17 @@ namespace Salesforce
                 sObjects, out limitInfoHeader, out result);
             return result[0];
         }
+
+        public SalesforceProxy.SaveResult Update(SalesforceProxy.sObject item)
+        {
+            //TODO
+            //SalesforceProxy.sObject[] sObjects = { item };
+            //SalesforceProxy.LimitInfo[] limitInfoHeader;
+            //SalesforceProxy.SaveResult[] result;
+            //Client.update(_sessionHeader, null, null, null, null, null, null, null, null, null, null, null,
+            //    sObjects, out limitInfoHeader, out result);
+            //return result[0];
+            return null;
+        }
     }
 }
