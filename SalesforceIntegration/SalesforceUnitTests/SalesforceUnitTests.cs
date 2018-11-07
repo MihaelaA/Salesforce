@@ -11,10 +11,19 @@ namespace SalesforceUnitTests
     public class SalesforceUnitTests
     {
         private static Salesforce.SalesforceIntegration sf;
+        private static Salesforce.RESTSalesforceIntegration restsf;
+        private static bool useREST = true;
 
         [ClassInitialize]
         static public void Initialize(TestContext context)
         {
+            if (useREST)
+                InitializeREST();
+            else
+                InitializeSOAP();
+        }
+        static private void InitializeSOAP()
+        { 
             try
             {
                 // Create the Salesforce connection 
@@ -25,6 +34,20 @@ namespace SalesforceUnitTests
                     );
 
                 sf.Login();
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine("Initialize error: {0}", ex.Message);
+            }
+        }
+
+        static private void InitializeREST()
+        {
+            try
+            {
+                // Create the Salesforce connection 
+                restsf = new Salesforce.RESTSalesforceIntegration();
+                restsf.Login();
             }
             catch (Exception ex)
             {
@@ -427,7 +450,7 @@ namespace SalesforceUnitTests
         [TestCategory("REST")]
         public void TestREST()
         {
-            bool result = sf.CallRest();
+            bool result = restsf.CallRest();
             Assert.IsTrue(result);
         }
 

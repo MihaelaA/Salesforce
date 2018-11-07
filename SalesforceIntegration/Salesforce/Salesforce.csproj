@@ -42,6 +42,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="RESTSalesforceIntegration.cs" />
     <Compile Include="SalesforceIntegration.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Service References\SalesforceProxy\Reference.cs">
